@@ -5,6 +5,7 @@
 
 function highestRunScorer(playersInfo) {
     console.log(playersInfo);
+    
 }
 
 let playersInfo=[["Sakib",35],["Tamim",56],["Mushfiq",23],["Riad",78],["Mehedi",95],["Mashrafee",67]]
