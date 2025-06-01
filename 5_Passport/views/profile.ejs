@@ -1,5 +1,34 @@
 <%- include("layout/header") %>
+    <style>
+        .dashboard {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(to right, #6a11cb, #104fbd);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .dashboard h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .dashboard .congrats {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffe600;
+            margin-top: 10px;
+        }
+    </style>
+
     <main>
-        Profile page
+        <div class="dashboard">
+            <h1>Welcome</h1>
+            <p class="congrats">🎉 Congratulations on logging in successfully! 🎉</p>
+        </div>
     </main>
+
     <%- include("layout/footer") %>
