@@ -6,6 +6,7 @@ const cors = require('cors');
 const ejs = require('ejs');
 const app = express();
 const mongoStore = require('connect-mongo');
+require('./config/passport');
 require('./config/database');
 const User = require('./Models/user-model');
 const bcrypt = require('bcrypt');
@@ -29,9 +30,8 @@ app.use(
         // cookie: { secure: true }
     })
 );
-
 app.use(passport.initialize());
-app.use(passport.session);
+app.use(passport.session());
 
 //Home :get
 app.get('/', (req, res) => res.render('index'));
@@ -47,25 +47,53 @@ app.post('/register', async (req, res) => {
             username: req.body.username,
             password: hash
         });
-
         await newUser.save();
-        res.status(201).redirect("/login");
+        res.redirect("/login");
     } catch (error) {
         res.status(500).send("Something went wrong");
     }
 
 });
+
+//CheckLoggedIn
+const CheckLoggedIn = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return res.redirect('/profile');
+    }
+    next();
+}
 //Login : get
-app.get('/login', (req, res) => res.render('login'));
+app.get('/login', CheckLoggedIn, (req, res) => res.render('login'));
+
 //Login : post
-app.post('/login', (req, res) => {
+app.post('/login',
+    passport.authenticate('local', {
+        failureRedirect: '/login',
+        successRedirect: '/profile'
+    }),
+);
+
+const CheckProfileAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('login');
+}
+
+//profile protected
+app.get('/profile', CheckProfileAuthenticated, (req, res) => res.render('profile'));
+
+
+// Logout : get
+app.get('/logout', (req, res) => {
     try {
-        res.status(200).send('user Logged in');
+        req.logout((err) => {
+            if (err) return next(err);
+            res.render('logout');
+        });
     } catch (error) {
-        res.status(400).send(error.message);
+        res.status(500).send(error.message)
     }
 });
 
-//profile protected
-app.get('/profile', (req, res) => res.render('profile'));
 module.exports = app;
