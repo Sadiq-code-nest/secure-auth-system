@@ -41,7 +41,52 @@ app.get('/register', (req, res) => res.render('register'));
 app.post('/register', async (req, res) => {
     try {
         const user = await User.findOne({ username: req.body.username });
-        if (user) return res.status(401).send('This user already exists');
+
+        if (user) return res.status(401).render('userExists');
+
+
+        //         return res.status(401).send(`
+        //   <html>
+        //     <head>
+        //       <style>
+        //         body {
+        //           font-family: 'Segoe UI', sans-serif;
+        //           background-color: #fefefe;
+        //           display: flex;
+        //           justify-content: center;
+        //           align-items: center;
+        //           height: 100vh;
+        //         }
+        //         .message {
+        //           text-align: center;
+        //           background: #fff;
+        //           padding: 2rem;
+        //           border-radius: 0.5rem;
+        //           box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        //         }
+        //         .message a {
+        //           display: inline-block;
+        //           margin-top: 1rem;
+        //           color: #007bff;
+        //           text-decoration: none;
+        //           font-weight: bold;
+        //         }
+        //         .message a:hover {
+        //           text-decoration: underline;
+        //         }
+        //       </style>
+        //     </head>
+        //     <body>
+        //       <div class="message">
+        //         <h2>🚫 This user already exists.</h2>
+        //         <p>Please <a href="/login">click here</a> to go to the login page.</p>
+        //       </div>
+        //     </body>
+        //   </html>
+        // `);
+
+
+
         const hash = await bcrypt.hash(req.body.password, saltRound);
         const newUser = new User({
             username: req.body.username,
@@ -52,7 +97,6 @@ app.post('/register', async (req, res) => {
     } catch (error) {
         res.status(500).send("Something went wrong");
     }
-
 });
 
 //CheckLoggedIn
@@ -83,7 +127,6 @@ const CheckProfileAuthenticated = (req, res, next) => {
 //profile protected
 app.get('/profile', CheckProfileAuthenticated, (req, res) => res.render('profile'));
 
-
 // Logout : get
 app.get('/logout', (req, res) => {
     try {
@@ -95,5 +138,4 @@ app.get('/logout', (req, res) => {
         res.status(500).send(error.message)
     }
 });
-
 module.exports = app;
