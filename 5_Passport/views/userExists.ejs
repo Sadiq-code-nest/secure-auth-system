@@ -1,0 +1,39 @@
+<!-- views/userExists.ejs -->
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f9f9f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .message-box {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-box h2 {
+        color: red;
+        margin-bottom: 1rem;
+    }
+
+    .message-box a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .message-box a:hover {
+        text-decoration: underline;
+    }
+</style>
+<main>
+    <div class="message-box">
+        <h2>🚫 This user already exists.</h2>
+        <p>Please <a href="/login">click here</a> to go to the login page.</p>
+</main>
