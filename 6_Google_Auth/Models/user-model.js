@@ -4,8 +4,12 @@ const userSchema = mongoose.Schema({
         type: String,
         require: true,
         unique: true,
-    }
+    },
     // password removed cause for google auth no need to set password
+    googleId: {
+        type: String,
+        require: true,
+    }
 });
 
 const User = mongoose.model("User", userSchema);

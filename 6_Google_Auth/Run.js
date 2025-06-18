@@ -35,25 +35,10 @@ app.use(passport.session());
 
 //Home :get
 app.get('/', (req, res) => res.render('index'));
-// Register : get 
-app.get('/register', (req, res) => res.render('register'));
-// Register : post 
-app.post('/register', async (req, res) => {
-    try {
-        const user = await User.findOne({ username: req.body.username });
 
-        if (user) return res.status(401).render('userExists');
-        const hash = await bcrypt.hash(req.body.password, saltRound);
-        const newUser = new User({
-            username: req.body.username,
-            password: hash
-        });
-        await newUser.save();
-        res.redirect("/login");
-    } catch (error) {
-        res.status(500).send("Something went wrong");
-    }
-});
+
+
+
 
 //CheckLoggedIn
 const CheckLoggedIn = (req, res, next) => {
@@ -65,13 +50,17 @@ const CheckLoggedIn = (req, res, next) => {
 //Login : get
 app.get('/login', CheckLoggedIn, (req, res) => res.render('login'));
 
-//Login : post
-app.post('/login',
-    passport.authenticate('local', {
-        failureRedirect: '/login',
-        successRedirect: '/profile'
-    }),
-);
+
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile'] }));
+
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login', successRedirect: '/profile' }),
+    function (req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/');
+    });
+
 
 const CheckProfileAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
@@ -81,7 +70,7 @@ const CheckProfileAuthenticated = (req, res, next) => {
 }
 
 //profile protected
-app.get('/profile', CheckProfileAuthenticated, (req, res) => res.render('profile'));
+app.get('/profile', CheckProfileAuthenticated, (req, res) => res.render('profile', { username: req.user.username }));
 
 // Logout : get
 app.get('/logout', (req, res) => {
