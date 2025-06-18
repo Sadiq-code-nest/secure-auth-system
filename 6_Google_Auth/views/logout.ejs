@@ -1,0 +1,54 @@
+<%- include("layout/header") %>
+
+    <style>
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            background: linear-gradient(135deg, #fef9f4, #e2d1c3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2d3142;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.25rem;
+            color: #4f5d75;
+            margin-top: 10px;
+        }
+
+        a {
+            color: #d8723e;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #771611;
+        }
+
+        .emoji {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <main>
+        <div class="emoji">👋</div>
+        <h1>You have been logged out.</h1>
+        <p> Thank you for visiting!
+            <a href="/login">🔐 Click here to login again.</a>
+        </p>
+    </main>
+
+    <%- include("layout/footer") %>
