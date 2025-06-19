@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const saltRound = 10;
+const saltRounds = 10;
 const User = require('./Models/user-model');
 const app = express();
 app.use(cors());
@@ -9,36 +9,42 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //Home Route
 app.get('/', (req, res) => res.send('<h1> Welcome to JSON Web Token </h1>'));
-//Register Route
-app.post('/register', async (req, res) => {
-    const user = await User.findOne(({ username: req.body.username }));
-    if (user) return res.status(400).send('User Already exist');
 
-
-    bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
-        const newUser = new User(
-            {
+// register route
+app.post("/register", async (req, res) => {
+    try {
+        const user = await User.findOne({ username: req.body.username });
+        if (user) return res.status(400).send("User already exists");
+        bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
+            const newUser = new User({
                 username: req.body.username,
-                password: req.body.password
+                password: hash,
             });
-        await newUser.save().then((user) => {
-            res.send({
-                success: true,
-                messsage: "User is created successfully",
-                user: {
-                    id: user._id,
-                }
-
-            })
-
-        })
-
-
-    });
-
-
-
+            await newUser
+                .save()
+                .then((user) => {
+                    res.send({
+                        success: true,
+                        message: "User is created Successfully",
+                        user: {
+                            id: user._id,
+                            username: user.username,
+                        },
+                    });
+                })
+                .catch((error) => {
+                    res.send({
+                        success: false,
+                        message: "User is not created",
+                        error: error,
+                    });
+                });
+        });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
+
 //Login Route
 app.post('/login', (req, res) => res.send('<h1> Login page</h1>'));
 //Profile Route
