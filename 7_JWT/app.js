@@ -1,4 +1,6 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -46,10 +48,36 @@ app.post("/register", async (req, res) => {
 });
 
 //Login Route
-app.post('/login', (req, res) => res.send('<h1> Login page</h1>'));
+app.post("/login", async (req, res) => {
+    const user = await User.findOne({ username: req.body.username });
+    if (!user) {
+        return res.status(401).send({
+            success: false,
+            message: "User is not found",
+        });
+    }
+    if (!bcrypt.compareSync(req.body.password, user.password)) {
+        return res.status(401).send({
+            success: false,
+            message: "Incorrect password",
+        });
+    }
+    const payload = {
+        id: user._id,
+        username: user.username,
+    };
+    const token = jwt.sign(payload, process.env.SECRET_KEY, {
+        expiresIn: "2d",
+    });
+    return res.status(200).send({
+        success: true,
+        message: "User is logged in successfully",
+        token: "Bearer " + token,
+    });
+});
+
 //Profile Route
 app.get('/', (req, res) => res.send('<h1> Profile </h1>'));
-
 //Route error
 app.use((req, res, next) => { res.status(404).json({ message: 'Route not found' }) })
 //Server Error
