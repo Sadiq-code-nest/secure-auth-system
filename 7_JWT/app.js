@@ -1,4 +1,6 @@
 const express = require('express');
+// require('./config/passport');
+const passport = require('passport');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const cors = require('cors');
@@ -9,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(passport.initialize());
 //Home Route
 app.get('/', (req, res) => res.send('<h1> Welcome to JSON Web Token </h1>'));
 
@@ -77,9 +80,27 @@ app.post("/login", async (req, res) => {
 });
 
 //Profile Route
-app.get('/', (req, res) => res.send('<h1> Profile </h1>'));
+app.get(
+    "/profile",
+    passport.authenticate("jwt", { session: false }),
+    function (req, res) {
+        return res.status(200).send({
+            success: true,
+            user: {
+                id: req.user._id,
+                username: req.user.username,
+            },
+        });
+    }
+);
+
+
+
 //Route error
 app.use((req, res, next) => { res.status(404).json({ message: 'Route not found' }) })
 //Server Error
 app.use((err, req, res, next) => { res.status(500).json({ message: 'Server not found' }) })
 module.exports = app;
+
+
+
